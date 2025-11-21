@@ -57,9 +57,17 @@ if [ $ROS_VERSION = ${VERSION_ROS1} ]; then
     cd ../../
     catkin_make -DROS_EDITION=${VERSION_ROS1}
 elif [ $ROS_VERSION = ${VERSION_ROS2} ]; then
-    cd ../../
+    # Wir stehen schon im Paketordner (…/src[/external]/livox_ros_driver2)
+    WS_ROOT=$(cd ../.. && pwd)
+    # Falls wir in src/external sind, noch eine Ebene rauf:
+    if [ "$(basename "$WS_ROOT")" = "external" ]; then
+        WS_ROOT=$(cd "$WS_ROOT/.." && pwd)
+    fi
+
+    cd "$WS_ROOT"
     colcon build --cmake-args -DROS_EDITION=${VERSION_ROS2} -DHUMBLE_ROS=${ROS_HUMBLE}
 fi
+
 popd > /dev/null
 
 # remove the substituted folders/files
